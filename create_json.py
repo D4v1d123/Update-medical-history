@@ -22,35 +22,52 @@ def get_result_info(file_path):
         content = reader.pages[0]
         text = content.extract_text()
         words = text.split()
-        
+
         id_type_index = words.index("DOCUMENTO") + 2
+        age_index = words.index("EDAD") + 2
+        patients_name = ""
+        study_name = ""
+        
+        # Extract the study name between the words "ESTUDIO" y "HALLAZGOS:" 
         start = words.index("ESTUDIO") + 2
         end = words.index("HALLAZGOS:")
         
-        # Extract the study name between the words "ESTUDIO" y "HALLAZGOS:" 
-        study_name = ""
         for study_words in range(start, end):
             study_name += f"{words[study_words]} "
+
+        # Extract the patients name between the words "NOMBRE" y "DOCUMENTO" 
+        start = words.index("NOMBRE") + 2
+        end = words.index("DOCUMENTO")
         
-        return (words[id_type_index + 1], words[id_type_index], study_name)  # id 
-        # number, type id, study name.
+        for study_words in range(start, end):
+            patients_name += f"{words[study_words]} "
+
+        return (words[id_type_index + 1], words[id_type_index], study_name, patients_name, words[age_index])  # id 
+        # number, id type, study name, patients name and age.
     
 def create_json(sorted_file_paths):  
     data = []
 
     for file_path in sorted_file_paths:
-        id, id_type, study_name = get_result_info(file_path)
+        id, id_type, study_name, patients_name, age = get_result_info(file_path)
+
+        if(age == "NO"):
+            print(f"Document \"{file_path}\" has no age.")
+            break
+
         data.append({
+             "age" : int(age),
              "id" : id,
              "id_type" : id_type,
              "study_name" : study_name,
+             "patients_name" : patients_name,
              "file_path": file_path
         })  
         
     return data
 
 # File directory.
-dir_path = r"D:\Users\User\Documents\BACKUP 04-03-2024\David\Salud.SIS\SUBIR\ARCHIVOS"
+dir_path = r"C:\Users\RADIOLOGIA\Documents\David\Salud.SIS\SUBIR ARCHIVOS"
 
 sorted_file_paths = sort_dir_ascending(dir_path)
 data = create_json(sorted_file_paths)
