@@ -5,8 +5,6 @@ from re import findall
 from time import sleep
 from create_json import data 
 
-# Install the Pillow OpenCV add to README.txt
-
 # Move the mouse pointer and click.
 def moveMouse(y, x):
     pyautogui.click(y, x, interval=0.2)
@@ -20,7 +18,7 @@ def search_element(img_path):
     except pyautogui.ImageNotFoundException:
         return None
 
-# Wait for an element to be in screen. TODO
+# Wait for an element to be in screen.
 def wait_for_element_load(img_path):
     while True:
         if (coordinates := search_element(img_path)) != None:
@@ -46,38 +44,38 @@ def check_patients_data(name, data):
         pass
     elif (id_type == "TI") and (age >= 7) and (age <= 17):
         pass
-    elif (id_type == "CC") and (age >= 18):
+    elif (id_type == "CC") and (age >= 18): 
         pass
     else:
         print("Age does not correspond to the id type.")
         exit()
         
-sleep(1.5) 
+sleep(2) 
 while data is not None:
     # Wait until the patient consultation website has loaded.  
     wait_for_element_load(r"img\Search window.png")
     sleep(0.3)
  
     # Select the search type.
-    moveMouse(380, 295)
-    moveMouse(380, 345)
-
-    # Write patient id.
-    moveMouse(800, 355)
-    pyautogui.write(data[0]["id"])
+    moveMouse(445, 295)
+    moveMouse(445, 350)
 
     # Select the id type.
     type_id = data[0]["id_type"]
-    moveMouse(380, 345)
+    moveMouse(445, 360)
     if type_id == "CC":
-        moveMouse(380, 405)
+        moveMouse(445, 410)
     elif type_id == "TI":
-        moveMouse(380, 430)
+        moveMouse(445, 430)
     elif type_id == "RC":
-        moveMouse(380, 470)
+        moveMouse(445, 470)
+
+    # Write patient id.
+    moveMouse(1200, 360)
+    pyautogui.write(data[0]["id"])
 
     # Click the search button.
-    moveMouse(1305, 400) 
+    moveMouse(1505, 405) 
     sleep(1)
 
     # Check if type id is correct.
@@ -85,43 +83,43 @@ while data is not None:
     
     i = 0
     while not(element is None):
-        moveMouse(820, 540)
-        moveMouse(380, 345)
+        moveMouse(920, 530)
+        moveMouse(445, 350)
 
         # Select RC.
         if i == 0:
-            moveMouse(380, 470)
+            moveMouse(445, 470)
             sleep(0.5)
         # Select CC.
         elif i == 1:
-            moveMouse(380, 405)
+            moveMouse(445, 410)
             sleep(0.5) 
         # Select TI.
         elif i == 2:
-            moveMouse(380, 430)
+            moveMouse(445, 430)
             sleep(0.5)
         else:
             exit()
         
-        moveMouse(1305, 400)
+        moveMouse(1505, 405) 
         sleep(0.5)
         element =search_element(r"img\Data not found.PNG")
         i += 1
         
     # Click the select patient button.
     wait_for_element_load(r"img\Select patient.PNG") 
-    pyautogui.click(1235, 585)
+    pyautogui.click(1415, 580)
 
     # Wait until the patient clinic history website has loaded.
     wait_for_element_load(r"img\Document upload window.png")
 
     # Copy and get patient´s name
-    start_x, start_y = 325, 255
-    end_x, end_y = 1230, 255
+    start_x, start_y = 370, 260
+    end_x, end_y = 1500, 260
 
     pyautogui.moveTo(start_x, start_y)
     pyautogui.mouseDown()
-    pyautogui.dragTo(end_x, end_y, duration=0.2)
+    pyautogui.dragTo(end_x, end_y, duration=0.4)
     pyautogui.mouseUp()
 
     pyautogui.hotkey('ctrl', 'c')
@@ -130,7 +128,7 @@ while data is not None:
 
     check_patients_data(patients_name, data)
 
-    pyautogui.scroll(-400)
+    pyautogui.scroll(-300)
     
     # Click the select file button.
     sleep(0.5)
@@ -177,5 +175,5 @@ while data is not None:
         data.pop(0)
         
         # Go to patient consultation website.
-        pyautogui.click(210, 85)
+        pyautogui.click(50, 90)
         sleep(1.5)
